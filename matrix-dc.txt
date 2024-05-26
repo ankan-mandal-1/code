@@ -1,0 +1,77 @@
+// Online C compiler to run C program online
+#include <stdio.h>
+
+void matrix_multiply(int n, int A[][n], int B[][n], int C[][n]){
+    if (n==1){
+        C[0][0] = A[0][0] * B[0][0];
+        return;
+    }
+    
+    int mid = n/2;
+    int A11[mid][mid], A12[mid][mid], A21[mid][mid], A22[mid][mid];
+    int B11[mid][mid], B12[mid][mid], B21[mid][mid], B22[mid][mid];
+    int C11[mid][mid], C12[mid][mid], C21[mid][mid], C22[mid][mid];
+    
+    int i, j;
+    
+    for(i=0; i<mid; i++){
+        for(j=0; j<mid; j++){
+            A11[i][j] = A[i][j];
+            A12[i][j] = A[i][j+mid];
+            A21[i][j] = A[i+mid][j];
+            A22[i][j] = A[i+mid][j+mid];
+            
+            B11[i][j] = B[i][j];
+            B12[i][j] = B[i][j+mid];
+            B21[i][j] = B[i+mid][j];
+            B22[i][j] = B[i+mid][j+mid];
+        }
+    }
+    
+    matrix_multiply(mid, A11, B11, C11);
+    matrix_multiply(mid, A12, B21, C12);
+    matrix_multiply(mid, A11, B12, C21);
+    matrix_multiply(mid, A11, B22, C22);
+    
+    for(i=0; i<mid; i++){
+        for(j=0; j<mid; j++){
+            C[i][j] = C11[i][j] + C12[i][j];
+            C[i][j+mid] = C21[i][j] + C22[i][j];
+            C[i+mid][j] = C11[i][j] + C12[i][j];
+            C[i+mid][j+mid] = C21[i][j] + C22[i][j];
+        }
+    }
+    
+}
+
+void print_matrix(int n, int mat[][n]){
+    int i, j;
+    for(i=0; i<n; i++){
+        for(j=0; j<n; j++){
+            printf("%d ", mat[i][j]);
+        }
+        printf("\n");
+    }
+}
+
+int main() {
+    int n = 4;
+    int A[4][4] = {{1, 2, 3, 4},
+                   {5, 6, 7, 8},
+                   {9, 10, 11, 12},
+                   {13, 14, 15, 16}};
+    
+    int B[4][4] = {{17, 18, 19, 20},
+                   {21, 22, 23, 24},
+                   {25, 26, 27, 28},
+                   {29, 30, 31, 32}};
+    
+    int C[4][4] = {0};
+
+    matrix_multiply(n, A, B, C);
+
+    printf("Result matrix C:\n");
+    print_matrix(n, C);
+    
+    return 0;
+}
